@@ -14,7 +14,6 @@ html, body {
   justify-content: center;
 }
 
-/* background by weather (no animation now) */
 .bg-default {
   background: linear-gradient(135deg, #1e3a8a, #3b82f6, #06b6d4);
 }
@@ -39,7 +38,6 @@ html, body {
   background: linear-gradient(135deg, #e0f2fe, #bae6fd, #ffffff);
 }
 
-/* transparent app container */
 .app-container {
   width: 100%;
   max-width: 900px;
@@ -51,38 +49,90 @@ html, body {
   z-index: 1;
 }
 
-/* search bar */
 .search-bar {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto 16px auto;
+}
+
+.search-input-wrapper {
   display: flex;
-  margin-bottom: 20px;
-  background: white;
-  border-radius: 14px;
+  align-items: center;
+  background: rgba(15, 15, 25, 0.9);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
 }
 
 .search-input {
   flex: 1;
-  padding: 14px 16px;
-  font-size: 16px;
+  padding: 10px 16px;
   border: none;
   outline: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .search-btn {
-  padding: 0 20px;
-  font-size: 16px;
   border: none;
-  background: #2563eb;
-  color: white;
   cursor: pointer;
+  padding: 0 20px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .search-btn:hover {
-  background: #1d4ed8;
+  background: rgba(255, 255, 255, 0.22);
 }
 
-/* current weather card */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: rgba(5, 5, 15, 0.96);
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+.search-suggestion-item {
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: #f5f5f5;
+}
+
+.search-suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.suggestion-region {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+
 .current-card {
   background: linear-gradient(135deg, skyblue, dodgerblue);
   padding: 20px;
@@ -97,7 +147,6 @@ html, body {
   font-weight: bold;
 }
 
-/* hourly cards */
 .hourly-container {
   display: flex;
   gap: 12px;
@@ -121,7 +170,6 @@ html, body {
   transform: translateY(-6px);
 }
 
-/* daily cards */
 .daily-container {
   display: flex;
   gap: 14px;
@@ -158,7 +206,6 @@ h3 {
   margin: 24px 0 8px;
 }
 
-/* rain particles */
 .rain-layer {
   position: fixed;
   inset: 0;
@@ -186,7 +233,6 @@ h3 {
   100% { top: 110vh; }
 }
 
-/* snow + storm layers (not styled heavily yet) */
 .storm-layer {
   position: fixed;
   inset: 0;
@@ -199,7 +245,6 @@ h3 {
   display: block;
 }
 
-/* BIG OBVIOUS TEST BOLT */
 .lightning-bolt {
   position: absolute;
   top: 0;
@@ -213,7 +258,6 @@ h3 {
   animation: lightningStrike 7s infinite;
 }
 
-/* jagged edges using box-shadows (browser-safe) */
 .lightning-bolt::before,
 .lightning-bolt::after {
   content: "";
@@ -236,7 +280,6 @@ h3 {
   transform: rotate(25deg);
 }
 
-/* full sky flash synced to bolt */
 .storm-on .storm-layer::after {
   content: "";
   position: fixed;

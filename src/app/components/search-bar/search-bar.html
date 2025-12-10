@@ -1,0 +1,28 @@
+<div class="search-bar">
+  <div class="search-input-wrapper">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search city..."
+      [(ngModel)]="searchTerm"
+      (input)="onInputChange($event.target.value)"
+      (keydown.enter)="onEnter($event)"
+    />
+    <button class="search-btn" (click)="submitValue(searchTerm)">
+      Search
+    </button>
+  </div>
+
+  <div class="search-suggestions" *ngIf="showSuggestions">
+    <div
+      class="search-suggestion-item"
+      *ngFor="let s of suggestions"
+      (mousedown)="selectSuggestion(s)"
+    >
+      <span>{{ s.name }}</span>
+      <span class="suggestion-region">
+        {{ s.region || s.country }}
+      </span>
+    </div>
+  </div>
+</div>

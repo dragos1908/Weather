@@ -1,6 +1,5 @@
 <div class="weather-scene" [ngClass]="getBackgroundClass()">
 
-<!-- 🌥 Weather Animation Overlays -->
   <div class="cloud-layer"></div>
   <div class="rain-layer">
     <div
@@ -23,82 +22,27 @@
   <div class="fog-layer"></div>
   <div class="sun-layer"></div>
 
-
-
-  <!-- ✅ Glass App Container -->
   <div class="app-container">
 
-    <div style="margin-bottom: 10px">Weather App</div>
-
-    <div class="search-bar">
-      <input
-        class="search-input"
-        type="text"
-        placeholder="Search city..."
-        #cityInput
-        (keyup.enter)="search(cityInput.value)"
-      />
-      <button
-        class="search-btn"
-        (click)="search(cityInput.value)">
-        Search
-      </button>
-    </div>
+    <app-search-bar (citySelected)="search($event)"></app-search-bar>
 
     <hr />
 
-
     @if (weatherData) {
-    <div class="current-card">
-      <h2>{{ weatherData.location.name }}</h2>
-      <p class="temp">{{ weatherData.current.temp_c }} °C</p>
-      <p>{{ weatherData.current.condition.text }}</p>
-    </div>
+      <app-current-weather [weatherData]="weatherData"></app-current-weather>
 
-    <h3>Hourly Forecast</h3>
+      <app-hourly-forecast
+        [hourly]="hourly"
+        [formatHour]="formatHour">
+      </app-hourly-forecast>
 
-    @if (hourly.length > 0) {
-      <div class="hourly-container">
-        @for (hour of hourly; track hour.time) {
-          <div class="hour-card">
-            <p class="hour-time">{{ formatHour(hour.time) }}</p>
-            <img
-              [src]="'https:' + hour.condition.icon"
-              width="42"
-            />
-            <p><strong>{{ hour.temp_c }}°C</strong></p>
-            <p class="muted">💧 {{ hour.chance_of_rain }}%</p>
-            <p class="muted"> {{ hour.wind_kph }} km/h</p>
-          </div>
-        }
-      </div>
+      <app-daily-forecast
+        [daily]="daily"
+        [formatDate]="formatDate">
+      </app-daily-forecast>
+    } @else {
+      <p>Search for a city to see the weather.</p>
     }
-
-    <h3>7 Day Forecast</h3>
-
-    @if (daily.length > 0) {
-      <div class="daily-container">
-        @for (day of daily; track day.date) {
-          <div class="day-card">
-            <p class="day-date">{{ formatDate(day.date) }}</p>
-            <img
-              [src]="'https:' + day.day.condition.icon"
-              width="48"
-            />
-            <p>{{ day.day.condition.text }}</p>
-            <p>
-              <strong>{{ day.day.maxtemp_c }}°C</strong> /
-              {{ day.day.mintemp_c }}°C
-            </p>
-            <p class="muted">💧 {{ day.day.daily_chance_of_rain }}%</p>
-          </div>
-        }
-      </div>
-    }
-
-  } @else {
-    <p>Loading weather...</p>
-  }
 
 </div>
 </div>

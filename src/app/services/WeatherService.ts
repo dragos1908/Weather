@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { WeatherApiResponse } from '../models/weather';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +13,21 @@ export class WeatherService {
 
   constructor(private http: HttpClient) {}
 
-  getWeather(city: string): Observable<any> {
-    return this.http.get(
+  getWeather(city: string): Observable<WeatherApiResponse> {
+    return this.http.get<WeatherApiResponse>(
       `${this.baseUrl}?key=${this.apiKey}&q=${city}&days=7&aqi=yes&alerts=no`
     );
   }
+
+  searchCities(query: string): Observable<any[]> {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      return of([]);
+    }
+
+    const url = `https://api.weatherapi.com/v1/search.json?key=${this.apiKey}&q=${encodeURIComponent(trimmed)}`;
+
+    return this.http.get<any[]>(url);
+  }
+
 }

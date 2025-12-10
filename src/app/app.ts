@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { WeatherService } from './services/WeatherService';
 import {NgClass, NgForOf, NgStyle} from '@angular/common';
+import { CurrentWeatherComponent } from './components/weather/current-weather/current-weather';
+import { HourlyForecastComponent } from './components/weather/hourly-forecast/hourly-forecast';
+import { DailyForecastComponent } from './components/weather/daily-forecast/daily-forecast';
+import { SearchBarComponent } from './components/search-bar/search-bar';
+
+
 
 @Component({
   selector: 'app-root',
@@ -9,8 +15,13 @@ import {NgClass, NgForOf, NgStyle} from '@angular/common';
   imports: [
     NgStyle,
     NgForOf,
-    NgClass
+    NgClass,
+    CurrentWeatherComponent,
+    HourlyForecastComponent,
+    DailyForecastComponent,
+    SearchBarComponent
   ]
+
 })
 export class App implements OnInit {
   snowArray = Array.from({ length: 120 });
@@ -20,28 +31,33 @@ export class App implements OnInit {
   rainArray = Array.from({ length: 180 });
 
 
-  constructor(private weatherService: WeatherService) {}
+  constructor(
+    private weatherService: WeatherService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
 
   ngOnInit() {
-    this.loadWeather('Bucharest');
   }
 
   search(city: string) {
     city = city.trim();
     if (!city) return;
 
+    console.log('[App] search called with:', city);
     this.loadWeather(city);
   }
+
 
   private loadWeather(city: string) {
     this.weatherService.getWeather(city).subscribe(data => {
       this.weatherData = data;
-
       this.hourly = data?.forecast?.forecastday?.[0]?.hour ?? [];
-
       this.daily = data?.forecast?.forecastday ?? [];
 
       console.log('Daily data:', this.daily);
+
+      this.cdr.detectChanges();
     });
   }
 

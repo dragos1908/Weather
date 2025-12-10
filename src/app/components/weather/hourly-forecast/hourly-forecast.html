@@ -1,0 +1,15 @@
+<h3>Hourly Forecast</h3>
+
+@if (hourly.length > 0) {
+  <div class="hourly-container">
+    @for (hour of hourly; track hour.time) {
+      <app-hour-card
+        [time]="formatHour(hour.time)"
+        [iconUrl]="'https:' + hour.condition.icon"
+        [tempC]="hour.temp_c"
+        [chanceOfRain]="hour.chance_of_rain"
+        [windKph]="hour.wind_kph">
+      </app-hour-card>
+    }
+  </div>
+}
