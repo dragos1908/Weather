@@ -1,112 +1,104 @@
-<h1> Weather App</h1>
+<div class="weather-scene" [ngClass]="getBackgroundClass()">
 
-<input
-  type="text"
-  placeholder="Enter city..."
-  #cityInput
-  (keyup.enter)="search(cityInput.value)"
-/>
-
-<button (click)="search(cityInput.value)">
-  Search
-</button>
-
-<hr />
-
-@if (weatherData) {
-  <div>
-    <h2>{{ weatherData.location.name }}</h2>
-    <p>Temperature: {{ weatherData.current.temp_c }} °C</p>
-    <p>Condition: {{ weatherData.current.condition.text }}</p>
+<!-- 🌥 Weather Animation Overlays -->
+  <div class="cloud-layer"></div>
+  <div class="rain-layer">
+    <div
+      class="rain-drop"
+      *ngFor="let d of rainArray"
+      [ngStyle]="getRandomRainStyle()"
+    ></div>
   </div>
 
-  <h3>Hourly forecast (today)</h3>
+  <div class="snow-layer">
+    <div
+      class="snow-flake"
+      *ngFor="let s of snowArray"
+      [ngStyle]="getRandomSnowStyle()"
+    ></div>
+  </div>
+  <div class="storm-layer">
+    <div class="lightning-bolt"></div>
+  </div>
+  <div class="fog-layer"></div>
+  <div class="sun-layer"></div>
 
-  @if (hourly.length > 0) {
-    <div style="display: flex; overflow-x: auto; gap: 12px; padding: 8px 0;">
-      @for (hour of hourly; track hour.time) {
-        <div
-          style="
-      min-width: 170px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
-      background: #f4f4f4;
-    "
-        >
-          <div style="font-weight: bold;">
-            {{ formatHour(hour.time) }}
-          </div>
 
-          <img
-            [src]="'https:' + hour.condition.icon"
-            alt="icon"
-            width="48"
-          />
 
-          <div>
-            Temp: <strong>{{ hour.temp_c }} °C</strong>
-          </div>
+  <!-- ✅ Glass App Container -->
+  <div class="app-container">
 
-          <div>
-            Rain chance: {{ hour.chance_of_rain }} %
-          </div>
+    <div style="margin-bottom: 10px">Weather App</div>
 
-          <div>
-            Wind: {{ hour.wind_kph }} km/h
-          </div>
-        </div>
-      }
+    <div class="search-bar">
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search city..."
+        #cityInput
+        (keyup.enter)="search(cityInput.value)"
+      />
+      <button
+        class="search-btn"
+        (click)="search(cityInput.value)">
+        Search
+      </button>
     </div>
+
+    <hr />
+
+
+    @if (weatherData) {
+    <div class="current-card">
+      <h2>{{ weatherData.location.name }}</h2>
+      <p class="temp">{{ weatherData.current.temp_c }} °C</p>
+      <p>{{ weatherData.current.condition.text }}</p>
+    </div>
+
+    <h3>Hourly Forecast</h3>
+
+    @if (hourly.length > 0) {
+      <div class="hourly-container">
+        @for (hour of hourly; track hour.time) {
+          <div class="hour-card">
+            <p class="hour-time">{{ formatHour(hour.time) }}</p>
+            <img
+              [src]="'https:' + hour.condition.icon"
+              width="42"
+            />
+            <p><strong>{{ hour.temp_c }}°C</strong></p>
+            <p class="muted">💧 {{ hour.chance_of_rain }}%</p>
+            <p class="muted"> {{ hour.wind_kph }} km/h</p>
+          </div>
+        }
+      </div>
+    }
+
+    <h3>7 Day Forecast</h3>
+
+    @if (daily.length > 0) {
+      <div class="daily-container">
+        @for (day of daily; track day.date) {
+          <div class="day-card">
+            <p class="day-date">{{ formatDate(day.date) }}</p>
+            <img
+              [src]="'https:' + day.day.condition.icon"
+              width="48"
+            />
+            <p>{{ day.day.condition.text }}</p>
+            <p>
+              <strong>{{ day.day.maxtemp_c }}°C</strong> /
+              {{ day.day.mintemp_c }}°C
+            </p>
+            <p class="muted">💧 {{ day.day.daily_chance_of_rain }}%</p>
+          </div>
+        }
+      </div>
+    }
+
   } @else {
-    <p>No hourly data available.</p>
+    <p>Loading weather...</p>
   }
 
-  <h3>7-day forecast</h3>
-
-  @if (daily.length > 0) {
-    <div style="display: flex; overflow-x: auto; gap: 12px; padding: 8px 0;">
-      @for (day of daily; track day.date) {
-        <div
-          style="
-          min-width: 170px;
-          border: 1px solid #ccc;
-          border-radius: 10px;
-          padding: 10px;
-          text-align: center;
-          background: #eef2ff;
-        "
-        >
-          <div style="font-weight: bold; margin-bottom: 4px;">
-            {{ formatDate(day.date) }}
-          </div>
-
-          <img
-            [src]="'https:' + day.day.condition.icon"
-            alt="icon"
-            width="48"
-          />
-
-          <div>{{ day.day.condition.text }}</div>
-
-          <div>
-             High: <strong>{{ day.day.maxtemp_c }}°C</strong>
-            <div>
-              Low: <strong>{{ day.day.mintemp_c }}°C</strong>
-            </div>
-          </div>
-
-          <div>
-            Rain chance: {{ day.day.daily_chance_of_rain }} %
-          </div>
-        </div>
-      }
-    </div>
-  } @else {
-    <p>No daily forecast available.</p>
-  }
-
-} @else {
-  <p>Loading weather...</p>
-}
+</div>
+</div>
