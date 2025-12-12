@@ -1,10 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { WeatherService } from './services/WeatherService';
 import {NgClass, NgForOf, NgStyle} from '@angular/common';
-import { CurrentWeatherComponent } from './components/weather/current-weather/current-weather';
-import { HourlyForecastComponent } from './components/weather/hourly-forecast/hourly-forecast';
-import { DailyForecastComponent } from './components/weather/daily-forecast/daily-forecast';
 import { SearchBarComponent } from './components/search-bar/search-bar';
+import { WeatherSceneComponent } from './components/weather/weather-scene/weather-scene';
+import { WeatherPanelComponent } from './components/weather/weather-panel/weather-panel';
 
 
 
@@ -13,28 +12,25 @@ import { SearchBarComponent } from './components/search-bar/search-bar';
   standalone: true,
   templateUrl: './app.html',
   imports: [
-    NgStyle,
-    NgForOf,
-    NgClass,
-    CurrentWeatherComponent,
-    HourlyForecastComponent,
-    DailyForecastComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    WeatherSceneComponent,
+    WeatherPanelComponent,
   ]
 
 })
 export class App implements OnInit {
-  snowArray = Array.from({ length: 120 });
   weatherData: any;
   hourly: any[] = [];
   daily: any[] = [];
-  rainArray = Array.from({ length: 180 });
-
+  loading: boolean = false;
+  errorMessage: string | null = null;
 
   constructor(
     private weatherService: WeatherService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {
+  }
 
 
   ngOnInit() {
@@ -50,14 +46,36 @@ export class App implements OnInit {
 
 
   private loadWeather(city: string) {
-    this.weatherService.getWeather(city).subscribe(data => {
-      this.weatherData = data;
-      this.hourly = data?.forecast?.forecastday?.[0]?.hour ?? [];
-      this.daily = data?.forecast?.forecastday ?? [];
+    this.loading = true;
+    this.errorMessage = null;
+    this.cdr.detectChanges();
 
-      console.log('Daily data:', this.daily);
+    this.weatherService.getWeather(city).subscribe({
+      next: (data) => {
+        this.zone.run(() => {
+          this.weatherData = data;
+          this.hourly = data?.forecast?.forecastday?.[0]?.hour ?? [];
+          this.daily = data?.forecast?.forecastday ?? [];
 
-      this.cdr.detectChanges();
+          console.log('Daily data:', this.daily);
+
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.zone.run(() => {
+          console.error('Error loading weather:', err);
+
+          this.weatherData = null;
+          this.hourly = [];
+          this.daily = [];
+          this.loading = false;
+          this.errorMessage = 'Could not load weather for that city. Please try another name.';
+
+          this.cdr.detectChanges();
+        });
+      }
     });
   }
 
@@ -97,25 +115,48 @@ export class App implements OnInit {
     return 'bg-default';
   }
 
-  getRandomRainStyle() {
-    return {
-      left: Math.random() * 100 + 'vw',
-      animationDuration: 0.4 + Math.random() * 1.2 + 's',
-      animationDelay: Math.random() * 2 + 's',
-      opacity: Math.random()
-    };
-  }
+  useMyLocation() {
+    if (!navigator.geolocation) {
+      this.errorMessage = 'Geolocation is not supported by your browser.';
+      this.cdr.detectChanges();
+      return;
+    }
 
-  getRandomSnowStyle() {
-    return {
-      left: Math.random() * 100 + 'vw',
-      animationDuration: 4 + Math.random() * 6 + 's',
-      animationDelay: Math.random() * 5 + 's',
-      opacity: 0.4 + Math.random() * 0.6,
-      width: 4 + Math.random() * 6 + 'px',
-      height: 4 + Math.random() * 6 + 'px'
-    };
-  }
+    this.loading = true;
+    this.errorMessage = null;
+    this.cdr.detectChanges();
 
+    navigator.geolocation.getCurrentPosition(
+      (pos: GeolocationPosition) => {
+        this.zone.run(() => {
+          const query = `${pos.coords.latitude},${pos.coords.longitude}`;
+          this.loadWeather(query);
+        });
+      },
+      (err: GeolocationPositionError) => {
+        this.zone.run(() => {
+          this.loading = false;
+
+          switch (err.code) {
+            case err.PERMISSION_DENIED:
+              this.errorMessage = 'Location permission denied.';
+              break;
+            case err.POSITION_UNAVAILABLE:
+              this.errorMessage = 'Location unavailable.';
+              break;
+            case err.TIMEOUT:
+              this.errorMessage = 'Location request timed out.';
+              break;
+            default:
+              this.errorMessage = 'Could not get your location.';
+          }
+
+          this.cdr.detectChanges();
+        });
+      },
+      {enableHighAccuracy: true, timeout: 10000}
+    );
+
+  }
 }
 

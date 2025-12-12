@@ -1,48 +1,27 @@
-<div class="weather-scene" [ngClass]="getBackgroundClass()">
+<app-weather-scene [backgroundClass]="getBackgroundClass()">
 
-  <div class="cloud-layer"></div>
-  <div class="rain-layer">
-    <div
-      class="rain-drop"
-      *ngFor="let d of rainArray"
-      [ngStyle]="getRandomRainStyle()"
-    ></div>
-  </div>
+  @if (weatherData || loading || errorMessage) {
+    <app-weather-panel
+      [weatherData]="weatherData"
+      [hourly]="hourly"
+      [daily]="daily"
+      [formatHour]="formatHour"
+      [formatDate]="formatDate"
+      [loading]="loading"
+      [errorMessage]="errorMessage"
+      (citySelected)="search($event)"
+      (myLocationRequested)="useMyLocation()"
+    >
+    </app-weather-panel>
+  } @else {
+    <div class="landing-wrapper">
+      <h1 class="landing-title">Weather App</h1>
+      <p class="landing-subtitle">
+        Search for any city to see live forecasts and animated weather scenes.
+      </p>
 
-  <div class="snow-layer">
-    <div
-      class="snow-flake"
-      *ngFor="let s of snowArray"
-      [ngStyle]="getRandomSnowStyle()"
-    ></div>
-  </div>
-  <div class="storm-layer">
-    <div class="lightning-bolt"></div>
-  </div>
-  <div class="fog-layer"></div>
-  <div class="sun-layer"></div>
+      <app-search-bar (citySelected)="search($event)"></app-search-bar>
+    </div>
+  }
 
-  <div class="app-container">
-
-    <app-search-bar (citySelected)="search($event)"></app-search-bar>
-
-    <hr />
-
-    @if (weatherData) {
-      <app-current-weather [weatherData]="weatherData"></app-current-weather>
-
-      <app-hourly-forecast
-        [hourly]="hourly"
-        [formatHour]="formatHour">
-      </app-hourly-forecast>
-
-      <app-daily-forecast
-        [daily]="daily"
-        [formatDate]="formatDate">
-      </app-daily-forecast>
-    } @else {
-      <p>Search for a city to see the weather.</p>
-    }
-
-</div>
-</div>
+</app-weather-scene>

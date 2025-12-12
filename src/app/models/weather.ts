@@ -1,5 +1,3 @@
-// src/app/models/weather.ts
-
 export interface WeatherApiResponse {
   location: WeatherLocation;
   current: CurrentWeather;
@@ -25,7 +23,6 @@ export interface CurrentWeather {
   feelslike_c: number;
   feelslike_f: number;
   is_day: number;
-  // You can add more fields here if you start using them
 }
 
 export interface WeatherCondition {

@@ -1,0 +1,51 @@
+<div style="margin-bottom: 10px">Weather App</div>
+
+<div class="panel-search-row">
+  <app-search-bar (citySelected)="citySelected.emit($event)"></app-search-bar>
+
+  <button class="loc-btn" type="button" (click)="myLocationRequested.emit()">
+    Use my location
+  </button>
+</div>
+
+
+<hr />
+@if (errorMessage) {
+  <p class="error-message">{{ errorMessage }}</p>
+}
+
+@if (loading) {
+  <div class="skeleton-wrap">
+    <div class="skeleton skeleton-title"></div>
+    <div class="skeleton skeleton-line"></div>
+    <div class="skeleton skeleton-line short"></div>
+
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+    </div>
+
+    <div class="skeleton-row">
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+      <div class="skeleton skeleton-card"></div>
+    </div>
+  </div>
+} @else {
+  @if (weatherData) {
+    <app-current-weather [weatherData]="weatherData"></app-current-weather>
+
+    <app-hourly-forecast
+      [hourly]="hourly"
+      [formatHour]="formatHour">
+    </app-hourly-forecast>
+
+    <app-daily-forecast
+      [daily]="daily"
+      [formatDate]="formatDate">
+    </app-daily-forecast>
+  } @else {
+    <p>Search for a city to see the weather.</p>
+  }
+}
