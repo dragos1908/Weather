@@ -1,112 +1,27 @@
-<h1> Weather App</h1>
+<app-weather-scene [backgroundClass]="getBackgroundClass()">
 
-<input
-  type="text"
-  placeholder="Enter city..."
-  #cityInput
-  (keyup.enter)="search(cityInput.value)"
-/>
-
-<button (click)="search(cityInput.value)">
-  Search
-</button>
-
-<hr />
-
-@if (weatherData) {
-  <div>
-    <h2>{{ weatherData.location.name }}</h2>
-    <p>Temperature: {{ weatherData.current.temp_c }} °C</p>
-    <p>Condition: {{ weatherData.current.condition.text }}</p>
-  </div>
-
-  <h3>Hourly forecast (today)</h3>
-
-  @if (hourly.length > 0) {
-    <div style="display: flex; overflow-x: auto; gap: 12px; padding: 8px 0;">
-      @for (hour of hourly; track hour.time) {
-        <div
-          style="
-      min-width: 170px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
-      background: #f4f4f4;
-    "
-        >
-          <div style="font-weight: bold;">
-            {{ formatHour(hour.time) }}
-          </div>
-
-          <img
-            [src]="'https:' + hour.condition.icon"
-            alt="icon"
-            width="48"
-          />
-
-          <div>
-            Temp: <strong>{{ hour.temp_c }} °C</strong>
-          </div>
-
-          <div>
-            Rain chance: {{ hour.chance_of_rain }} %
-          </div>
-
-          <div>
-            Wind: {{ hour.wind_kph }} km/h
-          </div>
-        </div>
-      }
-    </div>
+  @if (weatherData || loading || errorMessage) {
+    <app-weather-panel
+      [weatherData]="weatherData"
+      [hourly]="hourly"
+      [daily]="daily"
+      [formatHour]="formatHour"
+      [formatDate]="formatDate"
+      [loading]="loading"
+      [errorMessage]="errorMessage"
+      (citySelected)="search($event)"
+      (myLocationRequested)="useMyLocation()"
+    >
+    </app-weather-panel>
   } @else {
-    <p>No hourly data available.</p>
+    <div class="landing-wrapper">
+      <h1 class="landing-title">Weather App</h1>
+      <p class="landing-subtitle">
+        Search for any city to see live forecasts and animated weather scenes.
+      </p>
+
+      <app-search-bar (citySelected)="search($event)"></app-search-bar>
+    </div>
   }
 
-  <h3>7-day forecast</h3>
-
-  @if (daily.length > 0) {
-    <div style="display: flex; overflow-x: auto; gap: 12px; padding: 8px 0;">
-      @for (day of daily; track day.date) {
-        <div
-          style="
-          min-width: 170px;
-          border: 1px solid #ccc;
-          border-radius: 10px;
-          padding: 10px;
-          text-align: center;
-          background: #eef2ff;
-        "
-        >
-          <div style="font-weight: bold; margin-bottom: 4px;">
-            {{ formatDate(day.date) }}
-          </div>
-
-          <img
-            [src]="'https:' + day.day.condition.icon"
-            alt="icon"
-            width="48"
-          />
-
-          <div>{{ day.day.condition.text }}</div>
-
-          <div>
-             High: <strong>{{ day.day.maxtemp_c }}°C</strong>
-            <div>
-              Low: <strong>{{ day.day.mintemp_c }}°C</strong>
-            </div>
-          </div>
-
-          <div>
-            Rain chance: {{ day.day.daily_chance_of_rain }} %
-          </div>
-        </div>
-      }
-    </div>
-  } @else {
-    <p>No daily forecast available.</p>
-  }
-
-} @else {
-  <p>Loading weather...</p>
-}
+</app-weather-scene>

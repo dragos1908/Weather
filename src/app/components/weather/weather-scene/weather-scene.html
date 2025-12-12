@@ -1,0 +1,32 @@
+<div class="weather-scene" [ngClass]="backgroundClass">
+
+  <div class="cloud-layer"></div>
+
+  <div class="rain-layer">
+    <div
+      class="rain-drop"
+      *ngFor="let d of rainArray"
+      [ngStyle]="getRandomRainStyle()">
+    </div>
+  </div>
+
+  <div class="snow-layer">
+    <div
+      class="snow-flake"
+      *ngFor="let s of snowArray"
+      [ngStyle]="getRandomSnowStyle()">
+    </div>
+  </div>
+
+  <div class="storm-layer">
+    <div class="lightning-bolt"></div>
+  </div>
+
+  <div class="fog-layer"></div>
+  <div class="sun-layer"></div>
+
+  <div class="app-container">
+    <ng-content></ng-content>
+  </div>
+
+</div>

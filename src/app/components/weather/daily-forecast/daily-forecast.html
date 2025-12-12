@@ -1,0 +1,16 @@
+<h3>7 Day Forecast</h3>
+
+@if (daily.length > 0) {
+  <div class="daily-container">
+    @for (day of daily; track day.date) {
+      <app-day-card
+        [date]="formatDate(day.date)"
+        [iconUrl]="'https:' + day.day.condition.icon"
+        [conditionText]="day.day.condition.text"
+        [maxTempC]="day.day.maxtemp_c"
+        [minTempC]="day.day.mintemp_c"
+        [chanceOfRain]="day.day.daily_chance_of_rain">
+      </app-day-card>
+    }
+  </div>
+}
